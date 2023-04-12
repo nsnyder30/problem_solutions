@@ -10,45 +10,41 @@ A Sudoku board (partially filled) could be valid but is not necessarily solvable
 Only the filled cells need to be validated according to the mentioned rules.
 */
 function isValidSudoku(board) {
-    for (let i = 0; i < 3; i++) {
-        for (let k = 0; k < 3; k++) {
-            // Rows
-            if (!checkSubset([...board[i * 3 + k]])) {
-                return false;
+    var row = 0;
+    var col = 0;
+    var blocks = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (var r = 0; r < 9; r++) {
+        for (var c = 0; c < 9; c++) {
+            if (board[r][c] !== ".") {
+                var v = Number(board[r][c]);
+                var block = (r - r % 3) + (c - c % 3) / 3;
+                if (blocks[block] & (1 << (v - 1))) {
+                    return false;
+                }
+                blocks[block] |= (1 << (v - 1));
+                if (row & (1 << (v - 1))) {
+                    return false;
+                }
+                row |= (1 << (v - 1));
             }
-            // Columns
-            if (!checkSubset([board[0][i * 3 + k], board[1][i * 3 + k], board[2][i * 3 + k],
-                board[3][i * 3 + k], board[4][i * 3 + k], board[5][i * 3 + k],
-                board[6][i * 3 + k], board[7][i * 3 + k], board[8][i * 3 + k]])) {
-                return false;
+            if (board[c][r] !== ".") {
+                var v = Number(board[c][r]);
+                if (col & (1 << (v - 1))) {
+                    return false;
+                }
+                col |= (1 << (v - 1));
             }
-            // Squares
-            if (!checkSubset([board[i * 3][k * 3], board[i * 3 + 1][k * 3], board[i * 3 + 2][k * 3],
-                board[i * 3][k * 3 + 1], board[i * 3 + 1][k * 3 + 1], board[i * 3 + 2][k * 3 + 1],
-                board[i * 3][k * 3 + 2], board[i * 3 + 1][k * 3 + 2], board[i * 3 + 2][k * 3 + 2]])) {
-                return false;
+            if (c == 8) {
+                col = 0;
+                row = 0;
             }
         }
     }
     return true;
 }
 ;
-function checkSubset(sub) {
-    const nums = {};
-    for (let c of sub) {
-        if (c != ".") {
-            if (c in nums) {
-                return false;
-            }
-            else {
-                nums[c] = 1;
-            }
-        }
-    }
-    return true;
-}
-let inp;
-let sol;
+var inp;
+var sol;
 inp = [
     ["5", "3", ".", ".", "7", ".", ".", ".", "."],
     ["6", ".", ".", "1", "9", "5", ".", ".", "."],
@@ -91,4 +87,3 @@ inp = [
 sol = isValidSudoku(inp);
 console.log("The following board is " + (sol ? "valid" : "invalid"));
 console.table(inp);
-//# sourceMappingURL=valid_sudoku.js.map

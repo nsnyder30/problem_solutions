@@ -11,45 +11,42 @@ Only the filled cells need to be validated according to the mentioned rules.
 */
 
 function isValidSudoku(board: string[][]): boolean {
-    for(let i = 0; i < 3; i++) {
-        for(let k = 0; k < 3; k++) {
-            // Rows
-            if(!checkSubset([...board[i*3+k]])) {
-                return false;
-            }
-
-            // Columns
-            if(!checkSubset([board[0][i*3+k], board[1][i*3+k], board[2][i*3+k], 
-                board[3][i*3+k], board[4][i*3+k], board[5][i*3+k], 
-                board[6][i*3+k], board[7][i*3+k], board[8][i*3+k]])) {
+    let row: number = 0;
+    let col: number = 0;
+    let blocks = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for(let r = 0; r < 9; r++) {
+        for(let c = 0; c < 9; c++) {
+            if(board[r][c] !== ".") {
+                const v = Number(board[r][c]);
+                const block = (r - r % 3) + (c - c % 3)/3;
+                if(blocks[block] & (1 << (v-1))) {
                     return false;
                 }
+                blocks[block] |= (1 << (v-1));
 
-            // Squares
-            if(!checkSubset([board[i*3][k*3], board[i*3+1][k*3], board[i*3+2][k*3], 
-                             board[i*3][k*3+1], board[i*3+1][k*3+1], board[i*3+2][k*3+1], 
-                             board[i*3][k*3+2], board[i*3+1][k*3+2], board[i*3+2][k*3+2]])) {
-                                return false;
-                            }
+                if(row & (1 << (v-1))) {
+                    return false;
+                }
+                row |= (1 << (v-1));
+            }
+
+
+            if(board[c][r] !== ".") {
+                const v = Number(board[c][r]);
+                if(col & (1 << (v-1))) {
+                    return false;
+                }
+                col |= (1 << (v-1));
+            }
+
+            if(c == 8) {
+                col = 0;
+                row = 0;
+            }
         }
     }
     return true;
 };
-
-function checkSubset(sub: string[]): boolean {
-    const nums: object = {};
-    for(let c of sub) {
-        if(c != ".") {
-            if(c in nums) {
-                return false;
-            } else {
-                nums[c] = 1;
-            }
-        }
-    }
-    return true;
-}
-
 
 let inp: string[][];
 let sol: boolean;
