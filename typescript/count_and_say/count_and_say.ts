@@ -24,5 +24,11 @@ console.log("For input: "+inp.toString(), " CountAndSay = '"+countAndSay(inp)+"'
 inp = 4;
 console.log("For input: "+inp.toString(), " CountAndSay = '"+countAndSay(inp)+"'");
 
+inp = 5;
+console.log("For input: "+inp.toString(), " CountAndSay = '"+countAndSay(inp)+"'");
+
+inp = 6;
+console.log("For input: "+inp.toString(), " CountAndSay = '"+countAndSay(inp)+"'");
+
 inp = 10;
 console.log("For input: "+inp.toString(), " CountAndSay = '"+countAndSay(inp)+"'");
