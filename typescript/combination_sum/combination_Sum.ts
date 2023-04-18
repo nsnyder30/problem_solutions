@@ -1,24 +1,33 @@
 function combinationSum(candidates: number[], target: number): number[][] {
-    let res: number[][] = [];
+    let sets = buildSum([[[], 0]], candidates, target);
+    return sets.map(function (a) { return a[0]; });
+};
 
-    function buildSum(arr: number[], target: number) {
-        if (target == 0) {
-            res.push([...arr]);
-            return;
-        }
-
-        for (let n of candidates) {
-            if (n <= target && (!arr.length || n >= arr[arr.length - 1])) {
-                arr.push(n);
-                buildSum(arr, target - n);
-                arr.pop();
+function buildSum(sets: [number[], number][], candidates: number[], target: number): [number[], number][] {
+    let recurse = false;
+    for (let i = sets.length - 1; i >= 0; i--) {
+        if (sets[i][1] != target) {
+            for (let n of candidates) {
+                let s = [...sets[i][0]];
+                let sum = sets[i][1] + n;
+                if (sum <= target && (s.length == 0 || n >= s[s.length - 1])) {
+                    s.push(n);
+                    sets.push([s, sum]);
+                    if (sum < target) {
+                        recurse = true;
+                    }
+                }
             }
+            sets.splice(i, 1);
         }
     }
 
-    buildSum([], target);
-    return res;
-};
+    if (recurse) {
+        return buildSum(sets, candidates, target);
+    } else {
+        return sets;
+    }
+}
 
 let inp: [number[], number] = [[2, 3, 6, 7], 7];
 let sol = combinationSum(...inp);

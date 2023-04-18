@@ -1,38 +1,43 @@
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 function combinationSum(candidates, target) {
-console.log("call combinationSum");
-console.table({c:candidates, t:target});
-    var res = [];
-    if (target > 1) {
-        for (var _i = 0, candidates_1 = candidates; _i < candidates_1.length; _i++) {
-            var n = candidates_1[_i];
-console.log({n:n, t:target});
-            if (n == target) {
-                res.push([n]);
-console.log("target match");
-console.table(res);
-            }
-            else if (n < target) {
-                for (var _a = 0, _b = combinationSum(candidates, target - n); _a < _b.length; _a++) {
-                    var a = _b[_a];
-                    if (n >= a[a.length - 1]) {
-                        a.push(n);
-                        if (a.reduce(function (x, y) { return x + y; }) == target) {
-console.log("target match");
-console.table({t:target, a:a});
-                            res.push(a);
-                        }
+    var sets = buildSum([[[], 0]], candidates, target);
+    return sets.map(function (a) { return a[0]; });
+}
+;
+function buildSum(sets, candidates, target) {
+    var recurse = false;
+    for (var i = sets.length - 1; i >= 0; i--) {
+        if (sets[i][1] != target) {
+            for (var _i = 0, candidates_1 = candidates; _i < candidates_1.length; _i++) {
+                var n = candidates_1[_i];
+                var s = __spreadArray([], sets[i][0], true);
+                var sum = sets[i][1] + n;
+                if (sum <= target && (s.length == 0 || n >= s[s.length - 1])) {
+                    s.push(n);
+                    sets.push([s, sum]);
+                    if (sum < target) {
+                        recurse = true;
                     }
                 }
             }
+            sets.splice(i, 1);
         }
     }
-console.log("end combinationSum");
-console.table(res);
-    return res;
+    if (recurse) {
+        return buildSum(sets, candidates, target);
+    }
+    else {
+        return sets;
+    }
 }
-;
-
-/*
 var inp = [[2, 3, 6, 7], 7];
 var sol = combinationSum.apply(void 0, inp);
 console.log("For input" + JSON.stringify(inp));
@@ -45,8 +50,6 @@ inp = [[2], 1];
 sol = combinationSum.apply(void 0, inp);
 console.log("For input" + JSON.stringify(inp));
 console.log("The solution is " + JSON.stringify(sol));
-*/
-
 inp = [[8, 7, 4, 3], 11];
 sol = combinationSum.apply(void 0, inp);
 console.log("For input" + JSON.stringify(inp));
